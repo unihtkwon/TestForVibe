@@ -5,15 +5,21 @@ const CATEGORIES = ['업무', '개인', '쇼핑', '공부', '기타']
 
 interface Todo {
   id: number
-  date: string
+  registeredAt: string
+  executeAt: string
+  dueAt: string
   category: string
   title: string
   detail: string
   done: boolean
 }
 
+const today = () => new Date().toISOString().slice(0, 10)
+
 const emptyForm = () => ({
-  date: new Date().toISOString().slice(0, 10),
+  registeredAt: today(),
+  executeAt: '',
+  dueAt: '',
   category: CATEGORIES[0],
   title: '',
   detail: '',
@@ -47,8 +53,16 @@ function App() {
 
       <div className="todo-form">
         <div className="form-row">
-          <label>날짜</label>
-          <input type="date" name="date" value={form.date} onChange={handleChange} />
+          <label>등록일</label>
+          <input type="date" name="registeredAt" value={form.registeredAt} onChange={handleChange} />
+        </div>
+        <div className="form-row">
+          <label>실행일</label>
+          <input type="date" name="executeAt" value={form.executeAt} onChange={handleChange} />
+        </div>
+        <div className="form-row">
+          <label>완료예정일</label>
+          <input type="date" name="dueAt" value={form.dueAt} onChange={handleChange} />
         </div>
         <div className="form-row">
           <label>구분</label>
@@ -84,7 +98,9 @@ function App() {
         <thead>
           <tr>
             <th>완료</th>
-            <th>날짜</th>
+            <th>등록일</th>
+            <th>실행일</th>
+            <th>완료예정일</th>
             <th>구분</th>
             <th>제목</th>
             <th>상세내용</th>
@@ -93,14 +109,16 @@ function App() {
         </thead>
         <tbody>
           {todos.length === 0 && (
-            <tr><td colSpan={6} className="empty">할 일이 없습니다.</td></tr>
+            <tr><td colSpan={8} className="empty">할 일이 없습니다.</td></tr>
           )}
           {todos.map(todo => (
             <tr key={todo.id} className={todo.done ? 'done' : ''}>
               <td>
                 <input type="checkbox" checked={todo.done} onChange={() => toggleDone(todo.id)} />
               </td>
-              <td>{todo.date}</td>
+              <td>{todo.registeredAt}</td>
+              <td>{todo.executeAt || '-'}</td>
+              <td>{todo.dueAt || '-'}</td>
               <td><span className="badge">{todo.category}</span></td>
               <td className="title-cell">{todo.title}</td>
               <td className="detail-cell">{todo.detail}</td>
